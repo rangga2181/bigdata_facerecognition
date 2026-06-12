@@ -1,0 +1,35 @@
+{
+  "model": {
+    "checkpoint": "D:\\BIG-Data\\tuber\\checkpoints\\best_model.pth",
+    "backbone": "efficientnet_b0",
+    "num_classes": 8,
+    "temperature": 1.0717333555221558
+  },
+  "dataset": {
+    "name": "custom_fer",
+    "test_samples": 3573
+  },
+  "classification": {
+    "accuracy": 0.801,
+    "precision": 0.6817,
+    "recall": 0.6528,
+    "f1": 0.657,
+    "UAR": 0.6528
+  },
+  "calibration": {
+    "ECE": 0.0228,
+    "BrierScore": 0.2928
+  },
+  "selective_prediction": {
+    "coverage_at_c07": 0.7755,
+    "risk_at_c07": 0.1176,
+    "total_errors": 711,
+    "high_conf_errors_pct": 27.71
+  },
+  "performance": {
+    "device": "cpu",
+    "avg_latency_ms": 12.72,
+    "p95_latency_ms": 13.39,
+    "estimated_fps": 78.6
+  }
+}

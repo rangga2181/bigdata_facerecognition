@@ -1,0 +1,86 @@
+model:
+  backbone: efficientnet_b0   # CPU-optimal: B0 lebih ringan dari B2
+  num_classes: 8              # Angry, Contempt, Disgust, Fear, Happy, Neutral, Sad, Surprise
+  dropout: 0.4
+  pretrained: true
+
+training:
+  epochs: 50                  # dari 20 → lebih banyak epoch untuk konvergensi
+  batch_size: 32
+  lr: 0.001
+  weight_decay: 0.01
+  early_stopping_patience: 12
+  scheduler: cosine
+  label_smoothing: 0.1
+  use_amp: false              # CPU tidak mendukung AMP dengan baik
+  num_workers: 0              # Windows CPU: hindari multiprocess worker
+  seed: 42
+  warmup_epochs: 5            # dari 3 → warmup lebih panjang
+  freeze_backbone_epochs: 5   # dari 3 → freeze backbone lebih lama di awal
+  backbone_lr_factor: 0.02    # backbone LR = head LR × 0.02
+  backbone_lr: null
+  gradient_accumulation_steps: 2  # efektif batch_size = 64 tanpa makan RAM lebih
+  use_tensorboard: false
+  max_train_samples: null
+  max_val_samples: null
+
+  # Focal Loss & MixUp (BARU)
+  use_focal_loss: true
+  focal_gamma: 2.0
+  use_class_weights: true
+  use_mixup: true
+  mixup_alpha: 0.2
+
+quality:
+  weights:
+    blur: 0.30
+    brightness: 0.20
+    pose: 0.25
+    occlusion: 0.15
+    face_size: 0.10
+  q_threshold: 0.5
+  min_face_size: 64
+
+rejection:
+  c_threshold: 0.70
+  e_threshold: 1.50
+
+calibration:
+  temperature: 1.0
+
+dataset:
+  name: custom_fer
+  root: dataset               # folder lokal: dataset/train, dataset/validation, dataset/test
+  val_split: validation       # nama subfolder validasi
+  image_size: 224
+
+# WOA Hyperparameter Optimization (CPU-friendly)
+woa:
+  n_agents: 8                 # jumlah agen, ringan di CPU
+  max_iter: 12                # iterasi WOA
+  quick_epochs: 3             # epoch per candidate evaluation
+  quick_image_size: 112       # resolusi kecil untuk quick eval di CPU
+  quick_max_samples: 800      # sampel per kelas untuk quick eval
+
+realtime:
+  fps_target: 30
+  camera_id: 0
+  display_width: 1280
+  display_height: 720
+  detector: mediapipe
+
+paths:
+  checkpoints: checkpoints
+  results: results
+  logs: checkpoints/logs
+
+# 8 kelas sesuai struktur folder (nama folder lowercase)
+emotion_classes:
+  0: angry
+  1: contempt
+  2: disgust
+  3: fear
+  4: happy
+  5: neutral
+  6: sad
+  7: suprise  # typo di dataset asli, ikutin nama foldernya
